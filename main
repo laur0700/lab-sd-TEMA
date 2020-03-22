@@ -1,0 +1,193 @@
+import time
+
+new = input("Doriti generarea unui nou fisier?(da/nu)\n")
+if new == "da":
+    import generator
+
+f = open("generated_file", "r")
+g = open("Rezultate", "a")
+
+g.write("***************************************\n")
+
+
+def sorted(v):
+    for i in range(len(v) - 1):
+        if v[i] > v[i + 1]:
+            return False
+
+    return True
+
+
+def bubblesort(v):
+    for i in range(len(v)):
+        for j in range(i + 1, len(v)):
+            if v[i] > v[j]:
+                aux = v[i]
+                v[i] = v[j]
+                v[j] = aux
+
+
+def countsort(v):
+    maxi = max(v)
+    mini = min(v)
+    k = 0
+
+    fr = [0] * (maxi + 1)
+    for i in v:
+        fr[i] = fr[i] + 1
+
+    for i in range(mini, len(fr)):
+        if fr[i] > 0:
+            for j in range(1, fr[i] + 1):
+                v[k] = i
+                k = k + 1
+
+
+def countingsort(v, poz):
+    x = [0] * len(v)
+    count = [0] * 10
+
+    for i in range(0, len(v)):
+        count[(v[i] // poz) % 10] = count[(v[i] // poz) % 10] + 1
+
+    for i in range(1, 10):
+        count[i] = count[i] + count[i - 1]
+
+    i = len(v) - 1
+    while i >= 0:
+        x[count[(v[i] // poz) % 10] - 1] = v[i]
+        count[(v[i] // poz) % 10] = count[(v[i] // poz) % 10] - 1
+        i = i - 1
+
+    for i in range(0, len(v)):
+        v[i] = x[i]
+
+
+def radixsort(v):
+    maxi = max(v)
+
+    poz = 1
+    while maxi // poz > 0:
+        countingsort(v, poz)
+        poz *= 10
+
+
+def mergesort(v):
+    if len(v) > 1:
+        mij = len(v) // 2
+        S = v[:mij]
+        D = v[mij:]
+
+        mergesort(S)
+        mergesort(D)
+
+        i = j = k = 0
+
+        while i < len(S) and j < len(D):
+            if S[i] < D[j]:
+                v[k] = S[i]
+                i = i + 1
+            else:
+                v[k] = D[j]
+                j = j + 1
+            k = k + 1
+        while i < len(S):
+            v[k] = S[i]
+            i = i + 1
+            k = k + 1
+        while j < len(D):
+            v[k] = D[j]
+            j = j + 1
+            k = k + 1
+
+
+def separare(v, x, y):
+    i = (x - 1)
+    pivot = v[y]
+
+    for j in range(x, y):
+        if v[j] <= pivot:
+            i = i + 1
+            v[i], v[j] = v[j], v[i]
+
+    v[i + 1], v[y] = v[y], v[i + 1]
+    return (i + 1)
+
+
+def quicksort(v, x, y):
+    if x < y:
+        p = separare(v, x, y)
+
+        quicksort(v, x, p - 1)
+        quicksort(v, p + 1, y)
+
+
+V = [int(i) for i in f.readline().split()]
+v = V.copy()
+
+# bubblesort
+if sorted(v) is False and len(V) < 50000:
+    start = time.time()
+    bubblesort(v)
+    end = time.time()
+    if sorted(v) is True:
+        g.write("bubblesort: " + str(end - start) + "s" + " Sorted!\n")
+else:
+    g.write("bubblesort: 0.0s " + "Not sorted!(too many numbers)\n")
+
+v = V.copy()
+
+# countsort
+if sorted(v) is False and max(v) // 100000000 == 0:
+    start = time.time()
+    countsort(v)
+    end = time.time()
+    if sorted(v) is True:
+        g.write("countsort: " + str(end - start) + "s" + " Sorted!\n")
+else:
+    g.write("countsort: 0.0s " + "Not sorted!(numbers too large)\n")
+
+v = V.copy()
+
+# radixsort
+if sorted(v) is False:
+    start = time.time()
+    radixsort(v)
+    end = time.time()
+    if sorted(v) is True:
+        g.write("radixsort: " + str(end - start) + "s" + " Sorted!\n")
+
+v = V.copy()
+
+# mergesort
+if sorted(v) is False:
+    start = time.time()
+    mergesort(v)
+    end = time.time()
+    if sorted(v) is True:
+        g.write("mergesort: " + str(end - start) + "s" + " Sorted!\n")
+
+v = V.copy()
+
+# quicksort
+if sorted(v) is False:
+    start = time.time()
+    quicksort(v, 0, len(v) - 1)
+    end = time.time()
+    if sorted(v) is True:
+        g.write("quicksort: " + str(end - start) + "s" + " Sorted!\n")
+
+v = V.copy()
+
+# standard sort
+if sorted(v) is False:
+    start = time.time()
+    v.sort()
+    end = time.time()
+    if sorted(v) is True:
+        g.write("standard: " + str(end - start) + "s" + " Sorted!\n")
+
+    g.write("\n")
+
+f.close()
+g.close()
