@@ -1,0 +1,29 @@
+from random import seed
+from random import randint
+
+f = open("generated_file", "w")
+g = open("Rezultate", "a")
+
+
+def generator(nr_cifre):
+    seed()
+    x = randint(1, 10000000)
+    seed((x * 3) % 19)
+    x = randint(1, 10000000)
+    seed(seed((x * 3) % 19))
+    x = randint(1497, 1314352147)
+    seed(seed(seed((x * 3) % 19)))
+
+    return randint(1, (10 ** nr_cifre) - 1)
+
+
+n = int(input("nr de numere: "))
+g.write("Numarul de numere: " + str(n) + "\n")
+m = int(input("max cifre: "))
+g.write("Maximul de cifre: " + str(m) + "\n")
+
+for i in range(n):
+    f.write(str(generator(m)) + " ")
+
+f.close()
+g.close()
